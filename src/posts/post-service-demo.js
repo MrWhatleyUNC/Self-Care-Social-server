@@ -8,26 +8,26 @@ const PostsService = {
         'pst.id',
         'pst.text',
         'pst.date_created',
-        // 'pst.user_id',
-        db.raw(
-          `json_strip_nulls(
-            json_build_object(
-              'id', usr.id,
-              'username', usr.username,
-              'date_created', usr.date_created
-            )
-          ) AS "author"`
-        ),
+        'pst.user_id'
+        // db.raw(
+        //   `json_strip_nulls(
+        //     json_build_object(
+        //       'id', usr.id,
+        //       'username', usr.username,
+        //       'date_created', usr.date_created
+        //     )
+        //   ) AS "author"`
+        // ),
       )
       .leftJoin(
         'selfcare_comments AS comm',
         'pst.id',
-        'comm.post_id'
+        'comm.post_id',
       )
       .leftJoin(
         'selfcare_users AS usr',
-        'pst.author.id',
-        'usr.id'
+        'pst.user_id',
+        'usr.id',
       )
       .groupBy('pst.id', 'usr.id')
   },
@@ -50,18 +50,19 @@ const PostsService = {
         'comm.id',
         'comm.text',
         'comm.date_created',
-        db.raw(
-          `json_strip_nulls(
-            row_to_json(
-              (SELECT tmp FROM (
-                SELECT
-                  usr.id,
-                  usr.username,
-                  usr.date_created
-              ) tmp)
-            )
-          ) AS "user"`
-        )
+        'comm.user_id'
+        // db.raw(
+        //   `json_strip_nulls(
+        //     row_to_json(
+        //       (SELECT tmp FROM (
+        //         SELECT
+        //           usr.id,
+        //           usr.username,
+        //           usr.date_created
+        //       ) tmp)
+        //     )
+        //   ) AS "user"`
+        // )
       )
       .where('comm.post_id', post_id)
       .leftJoin(
@@ -84,17 +85,12 @@ const PostsService = {
   },
 
   serializePost(post) {
-    const { author } = post
+    console.log(post)
     return {
       id: post.id,
       text: xss(post.text),
       date_created: new Date(post.date_created),
-      user_id: xss(post.user_id),
-      author: {
-        id: author.id,
-        username: author.username,
-        date_created: new Date(author.date_created)
-      },
+      user_id: post.user_id
     }
   },
 

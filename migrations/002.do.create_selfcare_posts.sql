@@ -3,7 +3,7 @@ CREATE TABLE selfcare_posts (
     text TEXT NOT NULL,
     date_created TIMESTAMPTZ DEFAULT now() NOT NULL,
     user_id INTEGER
-        REFERENCES selfcare_users(id) ON DELETE CASCADE NOT NULL,
+        REFERENCES selfcare_users(id) ON DELETE CASCADE NOT NULL
 );
 
 ALTER TABLE selfcare_users

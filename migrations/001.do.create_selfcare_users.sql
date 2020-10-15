@@ -3,6 +3,6 @@ CREATE TABLE selfcare_users (
   username TEXT NOT NULL,
   email TEXT NOT NULL,
   password TEXT NOT NULL,
---   admin BOOLEAN NOT NULL,
+  admin BOOLEAN DEFAULT 'FALSE' NOT NULL,
   date_created TIMESTAMPTZ DEFAULT now() NOT NULL
 );

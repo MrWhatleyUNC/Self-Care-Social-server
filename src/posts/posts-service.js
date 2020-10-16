@@ -8,7 +8,6 @@ const PostsService = {
         'pst.id',
         'pst.text',
         'pst.date_created',
-        // 'pst.user_id',
         db.raw(
           `json_strip_nulls(
             json_build_object(
@@ -26,7 +25,7 @@ const PostsService = {
       )
       .leftJoin(
         'selfcare_users AS usr',
-        'pst.author.id',
+        'pst.user_id',
         'usr.id'
       )
       .groupBy('pst.id', 'usr.id')
@@ -34,7 +33,7 @@ const PostsService = {
 
   getByUserId(db, user_id){
     return PostsService.getAllPosts(db)
-      .where('pst.author.id', user_id)
+      .where('pst.user_id', user_id)
   },
 
   getById(db, id) {
@@ -81,6 +80,12 @@ const PostsService = {
       .then(post =>
         PostsService.getById(db, post.id)
       )
+  },
+
+  deletePost(db, postId){
+    console.log('postId to be deleted:', postId)
+    return PostsService.getById(db, postId)
+    .delete()
   },
 
   serializePost(post) {

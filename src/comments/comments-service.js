@@ -42,6 +42,11 @@ const CommentsService = {
       )
   },
 
+  deleteComment(db, commentId){
+    return CommentsService.getById(db, commentId)
+    .del()
+  },
+
   serializeComment(comment) {
     const { user } = comment
     return {

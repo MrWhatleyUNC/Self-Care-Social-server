@@ -59,7 +59,6 @@ postsRouter
   .all(requireAuth)
   .all(checkPostExists)
   .get((req, res) => {
-    console.log(res)
     res.json(PostsService.serializePost(res.post))
   })
 
@@ -76,6 +75,19 @@ postsRouter
         res.json(comments.map(comment=> PostsService.serializePostComment(comment)))
       })
       .catch(next)
+  })
+
+postsRouter
+  .route('/delete')
+  .all(requireAuth)
+  .delete(jsonBodyParser, (req, res, next)=>{
+    console.log('req.body of delete post:',req.body)
+    PostsService.deletePost(
+      req.app.get('db'),
+      req.body.post_id
+    )
+    .then(res.status(201))
+    .catch(next)
   })
 
 /* async/await syntax for promises */

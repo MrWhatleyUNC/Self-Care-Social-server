@@ -12,7 +12,6 @@ commentsRouter
   .post(jsonBodyParser, (req, res, next) => {
     const { post_id, text } = req.body
     const newComment = { post_id, text }
-    console.log(req.user)
     for (const [key, value] of Object.entries(newComment))
       if (value == null)
         return res.status(400).json({
@@ -32,6 +31,18 @@ commentsRouter
           .json(CommentsService.serializeComment(comment))
       })
       .catch(next)
-    })
+  })
+
+commentsRouter
+  .route('/delete')
+  .all(requireAuth)
+  .delete(jsonBodyParser, (req, res, next) => {
+    CommentsService.deleteComment(
+      req.app.get('db'),
+      req.body.comment_id
+    )
+    .then(res.status(201))
+    .catch(next)
+  })
 
 module.exports = commentsRouter
